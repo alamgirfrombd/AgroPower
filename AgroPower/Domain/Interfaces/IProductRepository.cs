@@ -10,5 +10,7 @@ namespace AgroPower.Domain.Interfaces
         Task UpdateAsync(Product product);
         Task DeleteAsync(Guid id);
         Task<Product?> GetByNameAsync(string name);
+
+           Task<IEnumerable<Product>> GetAllWithCategoryAsync();
     }
 }

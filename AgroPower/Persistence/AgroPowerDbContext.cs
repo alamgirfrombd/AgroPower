@@ -1,5 +1,6 @@
 ﻿using AgroPower.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using AgroPower.DTOs;
 
 namespace AgroPower.Persistence
 {
@@ -31,6 +32,7 @@ namespace AgroPower.Persistence
                 .HasMaxLength(100);
 
         }
+        public DbSet<AgroPower.DTOs.ProductUpdateDto> ProductUpdateDto { get; set; } = default!;
     }
 
 }

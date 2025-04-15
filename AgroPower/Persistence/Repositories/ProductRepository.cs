@@ -41,5 +41,13 @@ namespace AgroPower.Persistence.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<IEnumerable<Product>> GetAllWithCategoryAsync()
+        {
+            return await _context.Products
+                .Include(p => p.Category) // এটা কাজ করবে যদি Navigation Property থাকে
+                .ToListAsync();
+        }
+
     }
 }

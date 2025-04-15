@@ -1,0 +1,160 @@
+﻿@model AgroPower.DTOs.ProductUpdateDto
+
+<h4>Edit Product</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" method="post" id="productForm" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-failure="onFailure">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" placeholder="Enter product name" required />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Code" class="control-label"></label>
+                <input asp-for="Code" class="form-control" placeholder="Enter product code" required />
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Quantity" class="control-label"></label>
+                <input asp-for="Quantity" type="number" min="0" class="form-control" placeholder="Enter quantity" required />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" type="number" step="0.01" min="0" class="form-control" placeholder="Enter price (e.g., 19.99)" required />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CategoryId" class="control-label"></label>
+                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories" required>
+                    <option value="">Select a category</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+
+
+
+            <div class="form-group d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Toast Container for Notifications -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Product updated successfully!
+        </div>
+    </div>
+    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-danger text-white">
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Failed to update product. Please try again.
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Initialize form validation
+            $("#productForm").validate({
+                rules: {
+                    Name: { required: true, maxlength: 100 },
+                    Code: { required: true, maxlength: 50, remote: {
+                        url: "@Url.Action("CheckCodeUnique", "Products")",
+                        type: "POST",
+                        data: {
+                            Code: function () { return $("#Code").val(); },
+                            Id: function () { return $("#Id").val(); }
+                        }
+                    }},
+                    Quantity: { required: true, number: true, min: 0 },
+                    Price: { required: true, number: true, min: 0 },
+                    CategoryId: { required: true }
+                },
+                messages: {
+                    Name: {
+                        required: "Product name is required.",
+                        maxlength: "Name cannot exceed 100 characters."
+                    },
+                    Code: {
+                        required: "Product code is required.",
+                        maxlength: "Code cannot exceed 50 characters.",
+                        remote: "This code is already in use."
+                    },
+                    Quantity: {
+                        required: "Quantity is required.",
+                        number: "Enter a valid number.",
+                        min: "Quantity cannot be negative."
+                    },
+                    Price: {
+                        required: "Price is required.",
+                        number: "Enter a valid price.",
+                        min: "Price cannot be negative."
+                    },
+                    CategoryId: { required: "Please select a category." }
+                },
+                errorElement: "span",
+                errorPlacement: function (error, element) {
+                    error.addClass("text-danger").appendTo(element.parent());
+                }
+            });
+
+            // Initialize Bootstrap toasts
+            const successToast = new bootstrap.Toast(document.getElementById('successToast'));
+            const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+
+            // AJAX form submission callbacks
+            window.onSuccess = function (data) {
+                if (data.success) {
+                    successToast.show();
+                    setTimeout(() => window.location.href = '@Url.Action("Index")', 2000);
+                } else {
+                    errorToast.show();
+                }
+            };
+
+            window.onFailure = function () {
+                errorToast.show();
+            };
+
+            // Prevent Enter key submission except for submit button
+            $("#productForm").on("keypress", ":input:not(button)", function (e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                }
+            });
+
+            // Real-time feedback for price formatting
+            $("#Price").on("input", function () {
+                let value = $(this).val();
+                if (value && !isNaN(value)) {
+                    $(this).val(parseFloat(value).toFixed(2));
+                }
+            });
+        });
+    </script>
+}

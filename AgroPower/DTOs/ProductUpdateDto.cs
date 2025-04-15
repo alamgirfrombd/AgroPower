@@ -2,13 +2,14 @@
 
 namespace AgroPower.DTOs
 {
-    
-    public class ProductCreateDto : IValidatableObject
+    public class ProductUpdateDto : IValidatableObject
     {
-        //It is working properly of validation
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         [Required]
         [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
+        [Range(1, 99999, ErrorMessage = "ProductId must be a 5-digit number (00001-99999).")]
         [Required]
         [RegularExpression(@"^[a-zA-Z0-9]{5}$", ErrorMessage = "কোড অবশ্যই ৫ সংখ্যার হতে হবে, যেমন:০০০০১")]
         public string Code { get; set; } = string.Empty;
@@ -33,3 +34,4 @@ namespace AgroPower.DTOs
         }
     }
 }
+

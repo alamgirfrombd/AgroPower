@@ -1,6 +1,7 @@
 ﻿using AgroPower.Application.Interfaces;
 using AgroPower.Domain.Entities;
 using AgroPower.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace AgroPower.Application.Services
 {
@@ -18,7 +19,15 @@ namespace AgroPower.Application.Services
         public async Task UpdateAsync(Product product) => await _repository.UpdateAsync(product);
         public async Task DeleteAsync(Guid id) => await _repository.DeleteAsync(id);
         public async Task<Product?> GetByNameAsync(string name) => await _repository.GetByNameAsync(name);
+        // AgroPower.Application/Services/ProductService.cs
+
+        public async Task<IEnumerable<Product>> GetAllWithCategoryAsync()
+        {
+            return await _repository.GetAllWithCategoryAsync(); // ✅
+        }
+
+
 
     }
-   
+
 }

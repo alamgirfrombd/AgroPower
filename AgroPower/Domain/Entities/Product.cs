@@ -7,9 +7,6 @@ namespace AgroPower.Domain.Entities
     public class Product
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        
-        public int? ProductId { get; set; }
-
         public string Name { get; set; } = string.Empty;
         [Required]
         [RegularExpression(@"^[a-zA-Z0-9]{5}$", ErrorMessage = "Code must be exactly 5 alphanumeric characters.")]
@@ -23,6 +20,7 @@ namespace AgroPower.Domain.Entities
         [ForeignKey("Category")]
         public int? CategoryId { get; set; }  // Foreign Key from ProductCategory
         public ProductCategory Category { get; set; }
+
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

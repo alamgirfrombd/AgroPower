@@ -1,47 +1,54 @@
 ﻿@using AgroPower.DTOs
+@model List<ProductReadDto>  
 
 @{
     ViewData["Title"] = "Product List";
 }
 
 <!-- Page Header -->
-<div class="col d-flex justify-content-center align-items-center mb-1">
-    <h1 class="display-6 text-muted" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
-        Product Management
-    </h1>
+
+<div class="container-fluid m-1 p-2">
+
+    <div class="row align-items-center">
+        <div class="col">
+            <h1 class="display-6 text-muted" style="text-shadow:  2px 2px 4px rgba(0,0,0,0.3); font-weight:bold; color:black; text-transform:uppercase">Product List</h1>
+        </div>
+        <div class="col-auto">
+            <a href="/Product/Create" class="btn btn-success btn-lg shadow-sm rounded-circle d-flex align-items-center justify-content-center plus-btn">
+                <i class="fas fa-plus"></i>
+            </a>
+        </div>
+    </div>
 </div>
+
+
 
 <!-- Product Table -->
 <div class="container">
     <div class="card shadow-sm">
         <div class="card-body">
-
-            <!-- Flex container for table and button -->
-            <div class="d-flex justify-content-end mb-3">
-                <a href="@Url.Action("Create", "Product")" class="btn plus-btn"><i class="fas fa-plus"></i></a>
-            </div>
-
-            <table id="agroTable" class="table table-bordered table-hover">
+            <!-- Flex container for table controls and add button -->
+               <table id="agroTable" class="table table-bordered table-hover">
                 <thead class="table-dark">
                     <tr>
-                        @* <th>Product Id</th> *@
                         <th>Name</th>
                         <th>Code</th>
                         <th>Quantity</th>
                         <th>Price</th>
-                        <th>Actions</th>
+                        <th>Category</th>
+                        <th class="row-head">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
                         <tr>
-                            @* <td>@item.ProductId</td> *@
                             <td>@item.Name</td>
                             <td>@item.Code</td>
                             <td>@item.Quantity</td>
                             <td>@item.Price.ToString("C")</td>
-                            <td>
+                            <td>@item.CategoryName</td>
+                            <td class="row-head">
                                 <a href="@Url.Action("Edit", "Product", new { id = item.Id })" class="btn btn-warning btn-sm">Edit</a>
                                 <a href="@Url.Action("Details", "Product", new { id = item.Id })" class="btn btn-info btn-sm">Details</a>
                                 <a href="@Url.Action("Delete", "Product", new { id = item.Id })" class="btn btn-danger btn-sm">Delete</a>
@@ -54,135 +61,16 @@
     </div>
 </div>
 
-<!-- Styles Section -->
+<!-- Styles -->
 @section Styles {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-
-    <style>
-        body {
-            background-color: #f5f7fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .card {
-            transition: transform 0.2s ease-in-out;
-            border: none;
-            border-radius: 8px;
-        }
-
-            .card:hover {
-                transform: translateY(-4px);
-            }
-
-        .table {
-            background-color: #fff;
-        }
-
-            .table th, .table td {
-                vertical-align: middle;
-                text-align: center;
-            }
-
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .plus-btn {
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
-            padding: 0 !important;
-            background: linear-gradient(to bottom, #28a745, #218838);
-            border: none;
-            border-radius: 50%;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease-in-out;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-            .plus-btn:hover {
-                background: linear-gradient(to bottom, #218838, #1e7e34);
-                transform: translateY(-2px);
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            }
-
-            .plus-btn i {
-                color: #fff;
-            }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            border-radius: 50%;
-            margin: 0 2px;
-            padding: 0.5rem;
-        }
-
-            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-                background: #007bff;
-                color: white !important;
-            }
-
-        /* Custom styles for table controls */
-        #table-controls {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-
-        .dt-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .dataTables_length select {
-            width: auto;
-            padding: 0.25rem;
-        }
-
-        .dataTables_filter input {
-            width: 200px;
-            padding: 0.25rem;
-            border-radius: 4px;
-            border: 1px solid #ced4da;
-        }
-
-
-        @@media (max-width: 576px) {
-            .btn-sm
-
-        {
-            font-size: 0.75rem;
-            padding: 0.2rem 0.4rem;
-        }
-
-        .plus-btn {
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-        }
-
-        .dt-controls {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
-
-        .dataTables_filter input {
-            width: 100%;
-        }
-
-        }
-    </style>
 }
 
-
+<!-- Scripts -->
 @section Scripts {
+    <!-- jQuery FIRST -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
@@ -194,17 +82,89 @@
                 searching: true,
                 ordering: true,
                 info: true,
-                autoWidth: false,
+                autoWidth: true,
                 responsive: true,
                 language: {
                     search: "",
                     searchPlaceholder: "Search products..."
                 },
                 columnDefs: [
-                    { orderable: false, targets: 4 } // Disable sorting on Actions column
+                    { orderable: false, targets: 4 } // Action column index
                 ],
-                dom: '<"dt-controls"lf>t<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                dom: '<".dt-controls"lf>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
             });
         });
     </script>
 }
+
+<!-- Inline Style (Optional: move to CSS file later) -->
+
+<style>
+    body {
+        background-color: #f5f7fa;
+    }
+
+    .card {
+        transition: transform 0.2s;
+    }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+    .table th, .table td {
+        vertical-align: middle;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+    }
+
+    .input-group-text {
+        background-color: #fff;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border-radius: 50%;
+        margin: 0 2px;
+        padding: 0.5rem;
+    }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: #007bff;
+            color: white !important;
+        }
+
+    @@media (max-width: 576px) {
+        .btn-sm {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.4rem;
+        }
+    }
+
+    .plus-btn {
+        width: 50px;
+        height: 50px;
+        padding: 0;
+        font-size: 24px;
+        background: linear-gradient(to bottom, #28a745, #218838);
+        border: none;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease-in-out;
+    }
+
+        .plus-btn:hover {
+            background: linear-gradient(to bottom, #218838, #1e7e34);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .plus-btn i {
+            color: #fff;
+        }
+
+
+    .row-head{
+        text-align: center !important;
+    }
+</style>

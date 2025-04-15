@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\css\footer.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="API\Controllers\lursowdr.wpr~" />
     <None Remove="DTOs\ProductCategoryCreateDto.cs~RF32c6cf5.TMP" />
     <None Remove="wwwroot\css\sidebar.css~RF278007b.TMP" />
@@ -31,6 +35,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NUnit" Version="4.3.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
@@ -43,6 +48,7 @@
 
   <ItemGroup>
     <None Include="Application\Interfaces\IProductService.cs" />
+    <None Include="wwwroot\css\footer.css" />
     <None Include="wwwroot\css\sidebar.css" />
     <None Include="wwwroot\css\site.css" />
     <None Include="wwwroot\favicon.ico" />

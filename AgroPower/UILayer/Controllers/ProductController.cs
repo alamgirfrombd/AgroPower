@@ -1,36 +1,70 @@
-﻿using AgroPower.DTOs;
+﻿using AgroPower.Application.Interfaces;
+using AgroPower.Domain.Entities;
+using AgroPower.DTOs;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AgroPower.UILayer.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly HttpClient _httpClient;
+        private readonly IProductService _service;
+        private readonly IProductCategoryService _categoryService;
+        private readonly IMapper _mapper;
 
-        public ProductController(IHttpClientFactory httpClientFactory)
+        public ProductController(IProductService service, IProductCategoryService categoryService, IMapper mapper)
         {
-            _httpClient = httpClientFactory.CreateClient();
-            _httpClient.BaseAddress = new Uri("https://localhost:7009/");
+            _service = service;
+            _categoryService = categoryService;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
-            var response = await _httpClient.GetFromJsonAsync<List<ProductReadDto>>("api/Product");
-            return View(response);
+            var products = await _service.GetAllAsync();
+            var dtoList = _mapper.Map<IEnumerable<ProductReadDto>>(products);
+            return View(dtoList);
         }
 
-        public IActionResult Create() => View();
+        public async Task<IActionResult> Create()
+        {
+            await LoadCategoriesAsync();
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(ProductCreateDto dto)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/Product", dto);
-            if (response.IsSuccessStatusCode)
-                return RedirectToAction("Index");
+            if (!ModelState.IsValid)
+            {
+                await LoadCategoriesAsync();
+                return View(dto);
+            }
 
-            ModelState.AddModelError("", "Something went wrong");
-            return View(dto);
+            var existing = await _service.GetByNameAsync(dto.Name);
+            if (existing != null)
+            {
+                ModelState.AddModelError("Name", "This product already exists.");
+                await LoadCategoriesAsync();
+                return View(dto);
+            }
+
+            var product = _mapper.Map<Product>(dto);
+            await _service.AddAsync(product);
+            return RedirectToAction("Index");
+        }
+
+        private async Task LoadCategoriesAsync()
+        {
+            var categories = await _categoryService.GetAllAsync();
+            ViewBag.Categories = categories
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                })
+                .ToList();
         }
     }
-
 }

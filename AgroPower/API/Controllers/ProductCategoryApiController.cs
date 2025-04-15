@@ -8,11 +8,11 @@ namespace AgroPower.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductCategoryController : ControllerBase
+    public class ProductCategoryApiController : ControllerBase
     {
         private readonly IProductCategoryService _service;
         private readonly IMapper _mapper;
-        public ProductCategoryController(IProductCategoryService productService, IMapper mapper)
+        public ProductCategoryApiController(IProductCategoryService productService, IMapper mapper)
         {
             _service = productService;
             _mapper = mapper;

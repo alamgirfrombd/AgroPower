@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @* <meta name="description" content="Agrogami Power House"> *@
+    @* <title>@ViewData["Title"] - Agrogami Power House</title> *@
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+    <!-- Bootstrap & Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @RenderSection("Styles", required: false)
+</head>
+
+<body>
+    <!-- Toggle Button -->
+    <button class="menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false" id="menuToggle">
+        <i class="bi bi-list" aria-hidden="true"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+        <div class="sidebar-header">
+            <a class="sidebar-brand" href="/"></a>
+        </div>
+
+        <ul class="nav-list">
+            <li><a asp-controller="Home" asp-action="Index" class="nav-link"><i class="bi bi-house"></i> Home</a></li>
+            <li><a asp-controller="Home" asp-action="Privacy" class="nav-link"><i class="bi bi-shield-lock"></i> Privacy</a></li>
+
+            <li>
+                <button class="submenu-toggle" data-submenu="submenu1" aria-expanded="false">
+                    <i class="bi bi-gear"></i> Inventory <i class="bi bi-chevron-down toggle-icon"></i>
+                </button>
+                <ul class="submenu" id="submenu1">
+                    <li><a asp-controller="Product" asp-action="Index" class="nav-link">Product List</a></li>
+                    <li><a class="nav-link">Leave Types</a></li>
+                    <li><a class="nav-link">Core Period</a></li>
+                    <li><a class="nav-link">Company List</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <button class="submenu-toggle" data-submenu="submenu2" aria-expanded="false">
+                    <i class="bi bi-bar-chart"></i>Category<i class="bi bi-chevron-down toggle-icon"></i>
+                </button>
+
+                <ul class="submenu list-unstyled" id="submenu2">
+                    <li><a asp-controller="ProductCategory" asp-action="Index" class="nav-link">Product Category</a></li>
+                </ul>
+            </li>
+
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="content" id="content">
+        
+       @*  <header class="main-header text-center p-3">
+            <h1 class="main-title text-uppercase fw-bold" style="color:black; text-shadow:2px 2px 5px #ccc;">
+                @ViewData["Title"] Agrogami Power House
+            </h1>
+        </header> *@
+
+        <div class="container pb-0">
+            <main role="main">@RenderBody()</main>
+        </div>
+
+
+        @await Html.PartialAsync("_Footer")
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="~/js/site.js" asp-append-version="true" defer></script>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const content = document.getElementById("content");
+            const toggle = document.getElementById("menuToggle");
+            const isActive = sidebar.classList.toggle("active");
+            content.classList.toggle("shifted", isActive);
+            toggle.setAttribute("aria-expanded", isActive);
+            toggle.querySelector("i").classList.toggle("bi-list", !isActive);
+            toggle.querySelector("i").classList.toggle("bi-x", isActive);
+            localStorage.setItem("sidebarOpen", isActive);
+        }
+
+        function toggleSubMenu(id) {
+            const submenu = document.getElementById(id);
+            const button = submenu.previousElementSibling;
+            const isOpen = submenu.classList.toggle("show");
+            button.setAttribute("aria-expanded", isOpen);
+            const icon = button.querySelector(".toggle-icon");
+            icon.classList.toggle("bi-chevron-down", !isOpen);
+            icon.classList.toggle("bi-chevron-up", isOpen);
+            localStorage.setItem(`submenu_${id}`, isOpen);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (localStorage.getItem("sidebarOpen") === "true") toggleSidebar();
+            ["submenu1", "submenu2"].forEach(id => {
+                if (localStorage.getItem(`submenu_${id}`) === "true") toggleSubMenu(id);
+            });
+            document.getElementById("menuToggle").addEventListener("click", toggleSidebar);
+            document.querySelectorAll(".submenu-toggle").forEach(btn =>
+                btn.addEventListener("click", () => toggleSubMenu(btn.getAttribute("data-submenu")))
+            );
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

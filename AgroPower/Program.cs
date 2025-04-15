@@ -18,6 +18,13 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
 
+
+builder.Services.AddHttpClient("AgroPowerAPI", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7009/"); // 🔴 absolute URI
+});
+
+
 builder.Services.AddHttpClient();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 

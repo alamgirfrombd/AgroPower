@@ -2,8 +2,10 @@
 
 namespace AgroPower.DTOs
 {
+    
     public class ProductCreateDto : IValidatableObject
     {
+        //It is working properly of validation
         [Required]
         [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
